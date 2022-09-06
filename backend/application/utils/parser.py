@@ -16,9 +16,9 @@ update_user_parser.add_argument("password")
 
 # creating a parser for Deck , method=POST
 deck_parser=reqparse.RequestParser()
-deck_parser.add_argument("deck_id")
+#deck_parser.add_argument("deck_id")
 deck_parser.add_argument("deck_name")
-deck_parser.add_argument("owner_userid")
+#deck_parser.add_argument("owner_userid")
 
 # creating a parser for Deck , method=PUT
 update_deck_parser=reqparse.RequestParser()

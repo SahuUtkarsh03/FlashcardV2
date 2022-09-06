@@ -47,7 +47,9 @@ def create_app():
 app,api,celery,cache = create_app()
 
 #adding all RESTful controllers
-from application.controller.api import UserApi,DeckApi,CardApi
+from application.controller.api.cardapi import CardApi
+from application.controller.api.deckapi import DeckApi
+from application.controller.api.userapi import UserApi
 
 # mapping Apiclass to respective paths
 api.add_resource(UserApi,"/user/<string:username>", "/user")

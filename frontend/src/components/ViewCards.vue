@@ -23,7 +23,7 @@ import router from '../router';
 export default {
     name:'ViewCards',
     data(){
-        var token=localStorage.getItem('x-access-token');
+        var token=this.$store.getters.getToken;
         var deckid = this.$route.params.deckid
         var requestOptions = {
         method: 'GET',
@@ -49,7 +49,8 @@ export default {
     },
     components : {
         CardBody 
-    }
+    },
+
 }
 </script>
 

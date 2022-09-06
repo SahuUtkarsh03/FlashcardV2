@@ -18,6 +18,7 @@
 <script>
 import router from '../router';
 import {required} from 'vuelidate/lib/validators';
+import { mapGetters} from 'vuex';
 
 export default ({
     name:"AddCard",
@@ -34,10 +35,11 @@ export default ({
             answer:{required}
         }
     },
+    computed: mapGetters(['getToken']),
     methods:{
         async handleSubmit(){
 
-            var token = localStorage.getItem('x-access-token');
+            var token = this.$store.getters.getToken;
             var deckid = this.$route.params.deckid
             this.$v.$touch();
             if (!this.$v.$error){

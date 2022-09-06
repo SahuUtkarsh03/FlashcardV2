@@ -32,18 +32,22 @@ export default {
     },
     methods:{
         async handleSubmit(){
-            var token=localStorage.getItem('x-access-token');
+            var token=this.$store.getters.getToken
             this.$v.$touch();
             if (!this.$v.$error){
-                await fetch("http://127.0.0.1:5000/createDeck",{
-                    method:'POST',redirect:"follow",
-                    body:JSON.stringify({"deckname":this.deckname}),
+
+                var requestOptions = {
+                    method:'POST',
+                    redirect:"follow",
+                    body:JSON.stringify({"deck_name":this.deckname}),
                     headers:{
                         "Content-Type": "application/json",
                         "x-access-token": token,
-                        "Access-Control-Allow-Origin":"*"
-                    }
-                }).then(response => response.json())
+                        "Access-Control-Allow-Origin":"http://127.0.0.1:5000"              
+                    }};
+
+                await fetch("http://127.0.0.1:5000/deck",requestOptions)
+                .then(response => response.json())
                 .then(result => {
                     console.log(result);
 
@@ -54,33 +58,6 @@ export default {
                     else router.push("/dashboard");
                 })
                 .catch(error => console.log('error', error));
-                // .then(response => {                    
-                //     if(response.status==201){
-                //         const r= response.json();
-                //         console.log(response);
-                //         if(r.Msg)router.push("/dashboard");
-                //     }else {
-                //         console.log(response);
-                //         console.log(response.status);
-                //         console.log(response.text());
-                //     }
-                // })
-                // .then(response => {
-                //     if(response.status==201){
-                //         console.log(response);
-                //         const r = response.json();
-                //         console.log(r);
-                //         console.log(r.Msg);
-                //         r.Msg && router.push("/dashboard");
-                //     }else{
-                //         console.log(response);
-                //         const r = response.json();
-                //         console.log(r);
-                //         console.log(r.errMsg);
-                //     }
-                //     })
-                //     .catch(error => console.log('error', error));
-
             }else alert("Form not Submitted");
         }
     }

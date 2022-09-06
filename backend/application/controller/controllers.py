@@ -1,4 +1,3 @@
-from dataclasses import field
 from flask import jsonify,  request , make_response , send_file
 from flask import current_app as app
 import datetime 
@@ -36,15 +35,35 @@ def token_required(f):
 
     return decorated
 
-@app.route("/", methods=['GET'])
-def home():
-    return "<h1>App is working</h1>"
+@app.route('/login',methods=['POST'])
+def login():
+    auth = request.authorization
+    # print(auth)
+    if not auth or not auth.username or not auth.password:
+        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+    user = getUser(auth.username)
+    # print(user)
+    if not user:
+        return make_response('Could not verify, Wrong username', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+    if check_password_hash(user.hashed_password, auth.password):
+        # print(user)
+        token = jwt.encode({'username' : user.user_name,
+                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                            app.config['SECRET_KEY'],
+                            algorithm="HS256")
+
+        return make_response(token,200)
+
+    return make_response('Could not verify, Wrong Password', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
 @app.route("/senddeck/<deckid>",methods=['GET'])
 @token_required
 def sendCSV(current_user,deckid):
     job=scsv.delay(deckid)
-    res,fields=job.wait()
+    fields=['id','deck_id','question','answer','card_score','last_reviewed']
+    res=job.wait()
     with open("Deck.csv",'w') as csvFile:
         writer = csv.DictWriter(csvFile, fieldnames = fields)
         writer.writeheader() 
@@ -74,6 +93,7 @@ def reviewCard(current_user,cardid):
 
     pass
 
+'''
 @app.route("/createDeck", methods=['POST'])
 @token_required
 def createDeck(current_user):
@@ -93,6 +113,7 @@ def createDeck(current_user):
             return {"errMsg" : "Deck Exists"},409
 
     else: return {"errMsg": "Not Json"}, 400
+'''
 
 @app.route("/getdecks",methods=['GET'])
 @token_required
@@ -112,25 +133,7 @@ def getCards(current_user,deckid):
     for card in cards: res[card.id]=card.toJson()
     return jsonify(res),200
 
-@app.route('/login',methods=['POST'])
-def login():
-    auth = request.authorization
-    print(auth)
-    if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+@app.route("/", methods=['GET'])
+def home():
+    return "<h1>App is working</h1>"
 
-    user = getUser(auth.username)
-    print(user)
-    if not user:
-        return make_response('Could not verify, Wrong username', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
-
-    if check_password_hash(user.hashed_password, auth.password):
-        print(user)
-        token = jwt.encode({'username' : user.user_name,
-                            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-                            app.config['SECRET_KEY'],
-                            algorithm="HS256")
-
-        return make_response(token,200)
-
-    return make_response('Could not verify, Wrong Password', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})

@@ -21,7 +21,7 @@ export default {
     name:"ReviewCard",
 
     data(){
-        var token=localStorage.getItem('x-access-token');
+        var token=this.$store.getters.getToken;
         var requestOptions = {
         method: 'GET',
         headers:{"Access-Control-Expose-Headers": "Content-Disposition",
@@ -51,7 +51,7 @@ export default {
     },
     methods:{
         async rate(){
-            var token=localStorage.getItem('x-access-token');
+            var token=this.$store.getters.getToken
             await fetch(`http://127.0.0.1:5000/reviewcard/${this.$route.params.cardid}`,{
                 method: 'POST',
                 headers: {

@@ -12,16 +12,16 @@
                 <li class="nav-item">
                     <router-link class="nav-link" to= "/" >Home</router-link>
                 </li>
-                <li v-if="!isLogin" class="nav-item">
+                <li v-if="!getToken" class="nav-item">
                     <router-link class="nav-link" to= "/register" >Register</router-link>
                 </li>
-                <li v-if="!isLogin" class="nav-item">
+                <li v-if="!getToken" class="nav-item">
                     <router-link class="nav-link" to="/login">login</router-link>
                 </li>
-                <li v-if="!isLogout" class="nav-item">
+                <li v-if="getToken" class="nav-item">
                     <router-link class="nav-link" to="/dashboard" >Dashboard</router-link>
                 </li>
-                <li v-if="!isLogout" class="nav-item">
+                <li v-if="getToken" class="nav-item">
                     <span @click="logout" class="nav-link" >Logout</span>
                 </li>
 
@@ -32,25 +32,22 @@
 
 <script>
 import router from '@/router';
+import { mapGetters ,mapActions} from 'vuex';
+
 export default {
     name: 'NavBar',
     methods:{
+        ...mapActions(['clearToken','']),
         logout(){
             localStorage.removeItem("x-access-token");
             localStorage.removeItem("UserName");
-            this.$parent.$data.isLogin=false;
-            this.$parent.$children[0].$data.isLogin=false;
-            this.$parent.$children[0].$data.isLogout=true;
+            this.clearToken();
             router.push("/login");
             console.log("CLear Token");
 
         }
-    },data(){
-        return{
-            isLogin: this.$parent.$data.isLogin,
-            isLogout: this.$parent.$data.isLogout
-        }
-    }
+    },
+    computed:mapGetters(['getToken'])
 }
 </script>
 

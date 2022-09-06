@@ -1,13 +1,18 @@
 # FlashcardV2
 
 ## Project Structure
-```bash
+
+``` bash
 .
 ├── backend
 │   ├── application
 │   │   ├── config.py
 │   │   ├── controller
-│   │   │   ├── api.py
+│   │   │   ├── api
+│   │   │   │   ├── cardapi.py
+│   │   │   │   ├── deckapi.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── userapi.py
 │   │   │   ├── controllers.py
 │   │   │   └── __init__.py
 │   │   ├── data
@@ -28,13 +33,13 @@
 │   ├── celerybeat-schedule
 │   ├── db
 │   │   └── test_db.sqlite3
+│   ├── Deck.csv
 │   ├── localbeat.sh
 │   ├── localrun.sh
 │   ├── localsetup.sh
 │   ├── localworker.sh
 │   ├── main.py
 │   └── requirements.txt
-├── FlashcardApp v2 - Modern Application Development - 2.pdf
 ├── frontend
 │   ├── babel.config.js
 │   ├── jsconfig.json
@@ -58,8 +63,13 @@
 │   │   │   ├── UserRegister.vue
 │   │   │   └── ViewCards.vue
 │   │   ├── main.js
-│   │   └── router.js
+│   │   ├── router.js
+│   │   └── store
+│   │       ├── index.js
+│   │       └── modules
+│   │           ├── deck.js
+│   │           └── user.js
 │   └── vue.config.js
 ├── MAD2 project .pdf
-└── README.md
+├── README.md
 ```

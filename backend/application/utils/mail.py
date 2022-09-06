@@ -1,13 +1,12 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-from flask import current_app as app
 
 
-SMTP_SERVER_HOST="localhost"
-SMTP_SERVER__PORT=1025
-SENDER_ADDRESS="mad1@gmail.com"
-SENDER_PASSWORD=""
+SMTP_SERVER_HOST= "localhost"
+SMTP_SERVER__PORT= 1025
+SENDER_ADDRESS= "Utkarsh@Test.com"
+SENDER_PASSWORD= ""
 
 def sendEmail(to,sub,mess):
     msg=MIMEMultipart()
@@ -15,7 +14,7 @@ def sendEmail(to,sub,mess):
     msg['To'] = to
     msg['Subject']=sub
 
-    msg.attach(MIMEText(mess,"html"))
+    msg.attach(MIMEText(mess,"plain"))
 
     try:
         s= smtplib.SMTP(host=SMTP_SERVER_HOST,

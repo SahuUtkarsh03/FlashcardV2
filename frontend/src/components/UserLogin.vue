@@ -2,9 +2,9 @@
 <div class="main-form">
     <center><h1 class="display-1">Login Yourself</h1></center>
         <form @submit.prevent="handleLogin">
-            <div v-if="errorMsg">
+            <div v-if="getErrMsg">
                 <br>
-                <p class="alert alert-danger" > {{errorMsg}}</p>
+                <p class="alert alert-danger" > {{getErrMsg}}</p>
             </div>
             <input class="form-control" type="text" v-model="username" placeholder="Username" >
             <br>
@@ -19,14 +19,14 @@
 import router from '@/router';
 import base64 from 'base-64';
 import {required,maxLength,minLength} from 'vuelidate/lib/validators';
+import { mapGetters , mapActions } from 'vuex';
 
 export default {
     name:'UserLogin',
     data:()=>{
         return {
             username : null,
-            password : null,
-            errorMsg : null
+            password : null
         }
     },
     validations: ()=>{
@@ -36,6 +36,7 @@ export default {
         }
     },
     methods:{
+        ...mapActions(['Token','ErrorMsg']),
         async handleLogin(){   
             this.$v.$touch();
             if (!this.$v.$error){
@@ -57,27 +58,29 @@ export default {
 
             await fetch("http://127.0.0.1:5000/login", requestOptions)
             .then(response => {console.log(response.status);return response.text()})
-            .then(token => {console.log(token)
-                if (!token.includes("Could not verify")){
-                localStorage.setItem("x-access-token",token);
+            .then(val => {
+                console.log(val)
+                if (!val.includes("Could not verify")){
+                localStorage.setItem("x-access-token",val);
+                this.ErrorMsg(null);
+                this.Token(val);
                 localStorage.setItem("UserName",this.username);
-                this.$parent.$data.isLogin=true;
-                this.$parent.$children[0].$data.isLogin=!this.$parent.$children[0].$data.isLogin;
-                this.$parent.$children[0].$data.isLogout=!this.$parent.$children[0].$data.isLogout;
                 router.push("/dashboard");
-                }else {this.errorMsg=token;
+                }else {
+                    this.ErrorMsg(val);
                     this.username=null;
                     this.password=null;
                 }
-                })
+            })
             .catch(error => console.log('error', error));
+            console.log(this.password);
             } else alert("form not submmitted");       
             
         }
     },
-    
+    computed: mapGetters(['getToken','getErrMsg'])
 }
-</script>
+</script>getToken
 
 <style scoped>
     .main-form{

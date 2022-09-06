@@ -25,8 +25,7 @@ class LocalDevelopmentConfig(Config):
     CACHE_TYPE= "RedisCache"  
     CACHE_REDIS_HOST="localhost"
     CACHE_REDIS_PORT=6379
-    CACHE_DEFAULT_TIMEOUT= 300
-    
+    CACHE_DEFAULT_TIMEOUT= 300 
     
 class ProductionConfig(Config):
     DEBUG = False

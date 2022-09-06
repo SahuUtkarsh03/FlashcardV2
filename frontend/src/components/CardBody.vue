@@ -22,7 +22,7 @@ export default {
             router.push(`/reviewcard/${id_}`)
         },
         async deletecard(id_){
-            var token=localStorage.getItem('x-access-token');
+            var token=this.$store.getters.getToken
             var requestOptions = {
             method: 'DELETE',
             headers:{"Access-Control-Expose-Headers": "Content-Disposition",
@@ -34,10 +34,11 @@ export default {
 
             await fetch(`http://127.0.0.1:5000/card/${id_}`, requestOptions)
             .then(response => response.json())
-            .then(result => {console.log(result);
-                            this.isDeleted=true;
-                            delete this.$parent.$data.cards[`${id_}`]
-                            })
+            .then(result => {
+                console.log(result);
+                this.isDeleted=true;
+                delete this.$parent.$data.cards[`${id_}`]
+            })
             .catch(error => console.log('error', error));
             
             router.push(`/viewcards/${this.deckid_}`);

@@ -1,38 +1,43 @@
 from application.jobs.workers import celery
 from application.data.model import Card,User
 from celery.schedules import crontab
-from datetime import timedelta , datetime
 from application.utils.mail import sendEmail
 
+
 @celery.task
-def checkIfRevised():
+def sendMailToAll():
     users=User.query.all()
+    print(users)
     for user in users:
-        for deck in user.decks:
-            if (deck.last_reviewed - timedelta(days=1)) > datetime.utcnow().strftime('%d-%m-%Y %H:%M'):
-                sendEmail(user.email,"FLASHCARD Reminder","Please Review Your FlashCards")
+        print([deck.last_reviewed for deck in user.decks])
+        sendEmail(
+            user.email,
+            "Hello {}".format(user.firstname),
+            '''
+            I hope that you would be doing great.
+            Don't forget to revise your Flash Cards.
 
+            Have a great Day.
 
-@celery.task
-def sayHello(un):
-    return "Hello{}".format(un)
-    
+            Regards,
+            Utkarsh Sahu
+            '''
+        )
+        
+
 @celery.task
 def sendCSV(deckid):
-    res=[]
-    fields=['id','deck_id','question','answer','card_score','last_reviewed']
+    '''
+    an async function to return the list of JSON of cards...
+    '''
     cards = Card.query.filter_by(deck_id= deckid).all()
-    for card in cards : res.append(card.toJson())
-    return res,fields
+    return [card.toJson() for card in cards]
     
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
+
     sender.add_periodic_task(
-        crontab(hour=11,minute=59),
-        checkIfRevised.s()
-        )
-    
-    sender.add_periodic_task(
-        crontab(minute=2),
-        sayHello.s("Utkarsh")
+        crontab(minute=59,hour=23),
+        sendMailToAll.s(),
+        name="Mail testing"
         )

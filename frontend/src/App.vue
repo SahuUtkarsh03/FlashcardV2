@@ -13,13 +13,7 @@ export default {
   name: 'App',
   components: {  
     NavBar
-  },
-  data(){
-        return{
-            isLogin:false,
-            isLogout:true
-        }
-    }
+  }
 }
 </script>
 

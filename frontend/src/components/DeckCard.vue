@@ -27,9 +27,15 @@ export default({
     methods : {
 
         async deleteDeck(id_){
+            var token=this.$store.getters.getToken
             var requestOptions = {
             method: 'DELETE',
-            redirect: 'follow'
+            redirect: 'follow',
+            headers:{
+                        "Content-Type": "application/json",
+                        "x-access-token": token,
+                        "Access-Control-Allow-Origin":"http://127.0.0.1:5000"              
+                    }
             };
 
             await fetch(`http://127.0.0.1:5000/deck/${id_}`, requestOptions)
@@ -46,12 +52,14 @@ export default({
                     this.$parent.$data.errMsg=result.error_message
                 }
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                console.log(error);
+            });
 
             
         },
         async exportDeck(id_){
-            var token=localStorage.getItem('x-access-token');
+            var token=this.$store.getters.getToken
 
             var requestOptions = {
             method: 'GET',
